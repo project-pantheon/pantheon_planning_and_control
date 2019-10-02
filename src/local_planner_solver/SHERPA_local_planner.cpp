@@ -125,8 +125,8 @@ bool SherpaAckermannPlanner::InitializeController()
   W_(7,7) = q_obst_;
   W_(8,8) = q_obst_;
   W_(9,9) = q_obst_;
-  W_(10,10) = 500;
-  W_(11,11) = 500;
+  W_(10,10) = 200;
+  W_(11,11) = 200;
 
   WN_(0,0) = qf_p_(0);
   WN_(1,1) = qf_p_(1);
