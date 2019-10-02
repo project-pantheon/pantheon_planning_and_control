@@ -1,0 +1,5 @@
+add_subdirectory(local_planner_solver)
+add_subdirectory(nodes)
+add_subdirectory(base_ibvs_controller)
+add_subdirectory(gui)
+add_subdirectory(assimp_loader)

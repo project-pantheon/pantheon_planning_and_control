@@ -1,0 +1,46 @@
+vehicle_parameters:
+
+  l:                      1.33
+
+path_constraints:
+
+  q_p:                    [60, 60]
+  q_theta:                60
+  q_obst:                 1000
+
+terminal_constraints:
+
+  qf_p:                   [2000, 2000]
+  qf_theta:               2000
+
+boundary_constraints:
+
+  vel_bounds:            [-.5, .5]   
+  phi_bounds:            [-.7, .7] 
+
+ros_parameters:
+
+  traj_cmd_topic:         /command/pose      
+  odometry_topic:         /odom
+  command_topic:          /base/base_pad/cmd_vel
+  traj_topic:             /sherpa/trajectory_pts
+  lyapunov_topic:         /lyapunov
+
+
+general_params:
+
+  verbosity:              1 # Verbosity_Level : 0,1,2
+
+obstacles:
+  
+  obst1:                  [4, -2]
+  obst2:                  [7, -2]
+  obst3:                  [10, -2]
+  obst4:                  [4, -6.5]
+  obst5:                  [7, -6.5]
+  obst6:                  [10, -6.5]
+  safety_dist:            .5
+
+log_params:
+
+  output_log_file:        log_file.txt
