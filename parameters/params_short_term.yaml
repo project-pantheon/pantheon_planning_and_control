@@ -22,7 +22,7 @@ ros_parameters:
 
   traj_cmd_topic:         /command/pose      
   odometry_topic:         /odom
-  command_topic:          /base/base_pad/cmd_vel
+  command_topic:          /sherpa/akrm_cmd
   traj_topic:             /sherpa/trajectory_pts
   lyapunov_topic:         /lyapunov
 
