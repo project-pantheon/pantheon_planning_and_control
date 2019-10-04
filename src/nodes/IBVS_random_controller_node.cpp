@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
   #if __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   #endif
-  GLFWwindow* window = glfwCreateWindow(1000, 1000, "mav_gui_app", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(1000, 1000, "sherpa_planner_app", NULL, NULL);
 
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1); // Enable vsync
@@ -164,7 +164,7 @@ int main(int argc, char** argv) {
         std::exit(1);
   }
 
-  ros::init(argc, argv, "mav_gnomic_gui_node");
+  ros::init(argc, argv, "sherpa_planner_gui_node");
   ros::NodeHandle nh("~");
 
   IBVSRandomNode IBVS_node(nh, yaml_short_filename);

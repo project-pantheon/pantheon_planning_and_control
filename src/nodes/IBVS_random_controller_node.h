@@ -1,7 +1,5 @@
 #pragma once
-
 #include <src/local_planner_solver/SHERPA_local_planner.h>
-#include "randomObjectSpawner.h"
 #include <ros/package.h>
 
 //ros STUFF

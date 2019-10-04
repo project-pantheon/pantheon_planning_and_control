@@ -1,8 +1,8 @@
 #include "mav_imgui.h"
 
 MavGUI::MavGUI(ros::NodeHandle nh) : BaseGUI(nh), Obst1_(4,-2,0) ,
-                                                                   Obst2_(7,-2,0), Obst3_(10,-2,0) ,
-                                                                   Obst4_(4,-6.5,0) , Obst5_(7,-6.5,0) , Obst6_(10,-6.5,0) {
+                                     Obst2_(7,-2,0), Obst3_(10,-2,0) ,
+                                     Obst4_(4,-6.5,0) , Obst5_(7,-6.5,0) , Obst6_(10,-6.5,0) {
 
   _des_pos_vec3f_t[0] = 0.f;
   _des_pos_vec3f_t[1] = 0.f;
@@ -185,7 +185,7 @@ void MavGUI::activateController(){
   srvCall.request.is_active = true;
   _activate_controller.call(srvCall);
 
-  std::cout << FBLU("MavGUI: ") << srvCall.response.result << "\n";
+  std::cout << FBLU("SherpaPlannerGUI: ") << srvCall.response.result << "\n";
 
 }
 
@@ -195,7 +195,7 @@ void MavGUI::disactivateController(){
   srvCall.request.is_active = false;
   _activate_controller.call(srvCall);
 
-  std::cout << FBLU("MavGUI: ") << srvCall.response.result << "\n";
+  std::cout << FBLU("SherpaPlannerGUI: ") << srvCall.response.result << "\n";
 }
 
 
@@ -207,17 +207,20 @@ void MavGUI::showGUI(bool *p_open) {
   window_flags |= ImGuiWindowFlags_MenuBar;
  
   ImGui::SetNextWindowSize(ImVec2(700, 800), ImGuiCond_FirstUseEver);
-  if (!ImGui::Begin("GnomicMavGUI", p_open, window_flags)) {
+  if (!ImGui::Begin("SherpaPlennerGUI", p_open, window_flags)) {
     // Early out if the window is collapsed, as an optimization.
     ImGui::End();
     return;
   }
   
   /// MAIN WINDOW CONTENT
-  ImGui::TextColored(ImVec4(0.4f, 0.8f, 0.0f, 1.0f), "GnomicMavGUI");
+  ImGui::TextColored(ImVec4(0.4f, 0.8f, 0.0f, 1.0f), "SherpaPlannerGUI");
   ImGui::Text("Activate callback and publisher with Gazebo simulator open before sending the desired goal.");
   ImGui::Spacing();
-  if(ImGui::Button("Gazebo Utils")) _show_gazebo_gui ^= 1;
+  static char urdf_model_name[64] = "sherpa";
+  ImGui::InputText(" ", urdf_model_name, 64);
+  ImGui::SameLine();
+  if(ImGui::Button("Reset Model")) resetGazeboScene(urdf_model_name);
   ImGui::Spacing(); 
   ImGui::Separator();
   ImGui::Spacing(); 
@@ -318,19 +321,9 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Separator();
 
   // Show Here Auxiliar GUIs
-  if(_show_gazebo_gui) {
-    showGazeboGUI(&_show_gazebo_gui);
-  }
-   
-  // // Turn the RGB pixel data into an OpenGL texture:
-  // glDeleteTextures(1, &my_opengl_texture);
-  // glGenTextures(1, &my_opengl_texture);
-  // glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
-  // glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-  // glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  // glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S , GL_REPEAT );
-  // glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-  // glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+  // if(_show_gazebo_gui) {
+  //   showGazeboGUI(&_show_gazebo_gui);
+  // }
 
   // Turn the RGB pixel data into an OpenGL texture:
   glDeleteTextures(1, &my_avatar_texture);
@@ -347,11 +340,6 @@ void MavGUI::showGUI(bool *p_open) {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, avatarImg_res.cols, avatarImg_res.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, avatarImg_res.data);
   ImGui::Image((void*)(intptr_t)my_avatar_texture, ImVec2(avatarImg_res.cols, avatarImg_res.rows));
 
-  // ImGui::Columns(2, "Current Image and UAV Avatar");
-  // ImGui::Text("Augmented Current Image");
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, draw_image_res_.cols, draw_image_res_.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, draw_image_res_.data);
-  // ImGui::Image((void*)(intptr_t)my_opengl_texture, ImVec2(draw_image_res_.cols, draw_image_res_.rows));
-
   ImGui::NextColumn();
   ImGui::Text("Control law gains");
   ImGui::Text("0.2 0.4 3.5 Pose Regulation");
@@ -359,7 +347,6 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::DragFloat3(" K1 K2 K3 ", _K_values, 0.01f, -20.0f, 200.0f);
   if (ImGui::Button("Send gains"))
     changeControlLawGains();
-
   
   ImGui::Spacing();
   ImGui::Text("Ackermann Controller");
@@ -368,8 +355,6 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::SameLine();
   if (ImGui::Button("Disactivate"))
     disactivateController();
-
-
 
   ImGui::Spacing();
   ImGui::Text("Dynamic Obstacle");
@@ -394,6 +379,6 @@ void MavGUI::changeControlLawGains(){
   srvCall.request.k3 = _K_values[2];
   _set_control_gains.call(srvCall);
 
-  std::cout << FBLU("MavGUI: ") << srvCall.response.result << "\n";
+  std::cout << FBLU("SherpaPlannerGUI: ") << srvCall.response.result << "\n";
 
 }
