@@ -269,7 +269,7 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::Text("x[m]"); ImGui::NextColumn();
   ImGui::Text("y[m]"); ImGui::NextColumn();
   ImGui::Text("z[m]"); ImGui::NextColumn();
-  ImGui::Text("yaw[rad]"); ImGui::NextColumn();
+  ImGui::Text("yaw[deg]"); ImGui::NextColumn();
   ImGui::Separator();
   ImGui::Text("%f", _current_odom_position(0)); ImGui::NextColumn();
   ImGui::Text("%f", _current_odom_position(1)); ImGui::NextColumn();
