@@ -1,0 +1,8 @@
+<launch>
+
+    <node name="ibvs_controller_node" pkg="rvb_mpc" type="IBVS_random_controller_node" clear_params="true" output="screen" 
+          args="$(find rvb_mpc)/parameters/params_short_term.yaml">
+    </node>
+
+</launch>
+

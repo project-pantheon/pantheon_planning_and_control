@@ -169,7 +169,7 @@ void MavGUI::sendWaypoint() {
   geometry_msgs::Point pt_msg;
   pt_msg.x = _des_pos_vec3f_w[0];
   pt_msg.y = _des_pos_vec3f_w[1];
-  pt_msg.z = _des_orientationf_w;
+  pt_msg.z = _des_orientationf_w*M_PI/180;
   if(_sendingWaypoint)
     _waypoint_pub.publish(pt_msg);
 }
@@ -246,7 +246,7 @@ void MavGUI::showGUI(bool *p_open) {
   ImGui::NextColumn();
   ImGui::Text("Desired State (Waypoint)");
   ImGui::DragFloat2("x y [meters] ", _des_pos_vec3f_w, 0.01f, -20.0f, 200.0f);
-  ImGui::DragFloat("yaw [radians] ", &_des_orientationf_w, 0.01f, -M_PI, M_PI);
+  ImGui::DragFloat("yaw [degree] ", &_des_orientationf_w, 0.01f, -180.f, 180.f);
   if (ImGui::Button("Start Sending"))
     _sendingWaypoint = true;
   ImGui::SameLine();
