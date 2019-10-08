@@ -1,5 +1,8 @@
 <launch>
 
+    <param name="/use_sim_time" value="true"> 	
+    <node pkg="rosbag" type="play" name="rosbag_play" args="/home/ciro/2019-09-07-15-54-51.bag --clock -l"/>
+
     <node name="ibvs_controller_node" pkg="rvb_mpc" type="IBVS_random_controller_node" clear_params="true" output="screen" 
           args="$(find rvb_mpc)/parameters/params_short_term.yaml">
     </node>
