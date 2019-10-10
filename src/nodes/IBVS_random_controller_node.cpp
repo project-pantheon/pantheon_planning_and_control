@@ -117,7 +117,7 @@ void IBVSRandomNode::setDynamicObstacle(){
 
   SHERPA_planner_.obst7_ = Eigen::Vector2d(_dyn_obst_vec2f[0], _dyn_obst_vec2f[1]);
   SHERPA_planner_.InitializeController();
-  std::cout << FGRN("vertical_obst_7 succesfully set to: ") << SHERPA_planner_.obst7_.transpose() << "\n";
+  std::cout << FGRN("dynamic_obstacle succesfully set to: ") << SHERPA_planner_.obst7_.transpose() << "\n";
 }
 
 static void error_callback(int error, const char* description) {
