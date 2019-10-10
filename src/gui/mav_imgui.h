@@ -55,7 +55,7 @@ protected:
     ros::ServiceClient _set_control_gains, _activate_controller;
     ros::Time _gui_ros_time;
     
-    // ROS publisher
+    // ROS publishertrue
     ros::Publisher _cmd_pub, _waypoint_pub;
 
     void updateDesiredState();
