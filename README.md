@@ -26,6 +26,7 @@ sudo apt-get install libyaml-cpp-dev libglfw3-dev python-catkin-tools ros-melodi
 mkdir -p ~/sherpa_ws/src
 cd ~/sherpa_ws/
 catkin init 
+cd src/
 git clone https://github.com/cirpote/pantheon_planning_and_control.git && cd pantheon_planning_and_control
 sh clone_dependencies.sh
 catkin build
