@@ -27,7 +27,7 @@ mkdir -p ~/sherpa_ws/src
 cd ~/sherpa_ws/
 catkin init 
 cd src/
-git clone https://github.com/cirpote/pantheon_planning_and_control.git && cd pantheon_planning_and_control
+git clone https://github.com/project-pantheon/pantheon_planning_and_control.git && cd pantheon_planning_and_control
 sh clone_dependencies.sh
 catkin build
 ```
