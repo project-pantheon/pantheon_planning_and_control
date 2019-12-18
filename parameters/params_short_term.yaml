@@ -6,12 +6,12 @@ path_constraints:
 
   q_p:                    [60, 60]
   q_theta:                60
-  q_obst:                 1000
+  q_obst:                 100
 
 terminal_constraints:
 
-  qf_p:                   [2000, 2000]
-  qf_theta:               2000
+  qf_p:                   [100, 100]
+  qf_theta:               100
 
 boundary_constraints:
 
@@ -21,8 +21,8 @@ boundary_constraints:
 ros_parameters:
 
   traj_cmd_topic:         /command/pose      
-  odometry_topic:         /odom
-  command_topic:          /sherpa/akrm_cmd
+  odometry_topic:         /odom_gps
+  command_topic:          /base/base_pad/cmd_vel
   traj_topic:             /sherpa/trajectory_pts
   lyapunov_topic:         /lyapunov
 

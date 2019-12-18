@@ -28,8 +28,8 @@ public:
       void printControlVariables();
       void getTrajectoryVector(trajectory_msgs::JointTrajectory&);
 
-      const int NUM_STEPS = 10; /* Number of real-time iterations. */
-      const float KKT_THRESHOLD = 1e-5; /* Threshold as termination criterion. */
+      const int NUM_STEPS = 5; /* Number of real-time iterations. */
+      const float KKT_THRESHOLD = 1e-3; /* Threshold as termination criterion. */
 
       // solver matrices
       Eigen::Matrix<double, ACADO_NY, ACADO_NY> W_;

@@ -121,7 +121,7 @@ int main( )
 
       // Parameters with exemplary values. These are set/overwritten at runtime.
       const double t_start = 0.0;     // Initial time [s]
-      const double t_end = 10.0;       // Time horizon [s]
+      const double t_end = 15.0;       // Time horizon [s]
       const double dt = 0.5;          // Discretization time [s]
       const int N = round(t_end/dt);  // Number of nodes
 
@@ -163,38 +163,26 @@ int main( )
       IntermediateState obstDist6u = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6-.25 ) * ( p_y - yObst6-.25 );
       IntermediateState obstDist6dw = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6+.25 ) * ( p_y - yObst6+.25 );*/
      
-      IntermediateState obstDist1 = sqrt( ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1 ) * ( p_y - yObst1 ) );
-      IntermediateState obstDist2 = sqrt( ( p_x - xObst2 ) * ( p_x - xObst2 ) + ( p_y - yObst2 ) * ( p_y - yObst2 ) );
-      IntermediateState obstDist3 = sqrt( ( p_x - xObst3 ) * ( p_x - xObst3 ) + ( p_y - yObst3 ) * ( p_y - yObst3 ) );
-      IntermediateState obstDist4 = sqrt( ( p_x - xObst4 ) * ( p_x - xObst4 ) + ( p_y - yObst4 ) * ( p_y - yObst4 ) );
-      IntermediateState obstDist5 = sqrt( ( p_x - xObst5 ) * ( p_x - xObst5 ) + ( p_y - yObst5 ) * ( p_y - yObst5 ) );
-      IntermediateState obstDist6 = sqrt( ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6 ) * ( p_y - yObst6 ) );
-      IntermediateState obstDist7 = sqrt( ( p_x - xObst7 ) * ( p_x - xObst7 ) + ( p_y - yObst7 ) * ( p_y - yObst7 ) );
+      IntermediateState obstDist1 = sqrt( ( p_x - xObst1 + 0.05 ) * ( p_x - xObst1 + 0.05 ) + ( p_y - yObst1 + 0.05 ) * ( p_y - yObst1 + 0.05 ) );
+      IntermediateState obstDist2 = sqrt( ( p_x - xObst2 + 0.05 ) * ( p_x - xObst2 + 0.05 ) + ( p_y - yObst2 + 0.05 ) * ( p_y - yObst2 + 0.05 ) );
+      IntermediateState obstDist3 = sqrt( ( p_x - xObst3 + 0.05 ) * ( p_x - xObst3 + 0.05 ) + ( p_y - yObst3 + 0.05 ) * ( p_y - yObst3 + 0.05 ) );
+      IntermediateState obstDist4 = sqrt( ( p_x - xObst4 + 0.05 ) * ( p_x - xObst4 + 0.05 ) + ( p_y - yObst4 + 0.05 ) * ( p_y - yObst4 + 0.05 ) );
+      IntermediateState obstDist5 = sqrt( ( p_x - xObst5 + 0.05 ) * ( p_x - xObst5 + 0.05 ) + ( p_y - yObst5 + 0.05 ) * ( p_y - yObst5 + 0.05 ) );
+      IntermediateState obstDist6 = sqrt( ( p_x - xObst6 + 0.05 ) * ( p_x - xObst6 + 0.05 ) + ( p_y - yObst6 + 0.05 ) * ( p_y - yObst6 + 0.05 ) );
+      IntermediateState obstDist7 = sqrt( ( p_x - xObst7 + 0.05 ) * ( p_x - xObst7 + 0.05 ) + ( p_y - yObst7 + 0.05 ) * ( p_y - yObst7 + 0.05 ) );
 
       h << p_x 
         << p_y 
         << theta 
-        << 1 / obstDist1 
-        << 1 / obstDist2
-        << 1 / obstDist3 
-        << 1 / obstDist4 
-        << 1 / obstDist5
-        << 1 / obstDist6 
-        << 1 / obstDist7 
+        << 1 / ( obstDist1) 
+        << 1 / ( obstDist2)
+        << 1 / ( obstDist3) 
+        << 1 / ( obstDist4) 
+        << 1 / ( obstDist5)
+        << 1 / ( obstDist6) 
+        << 1 / ( obstDist7)
         << phi 
         << v;
-
-
-
-
-        /*1 / (obstDist1s + obstDist1d + obstDist1u + obstDist1dw) 
-        << 1 / (obstDist2s + obstDist2d + obstDist2u + obstDist2dw)
-        << 1 / (obstDist3s + obstDist3d + obstDist3u + obstDist3dw) 
-        << 1 / (obstDist4s + obstDist4d + obstDist4u + obstDist4dw) 
-        << 1 / (obstDist5s + obstDist5d + obstDist5u + obstDist5dw) 
-        << 1 / (obstDist6s + obstDist6d + obstDist6u + obstDist6dw) 
-        << 1 / obstDist7 
-        << phi << v;*/
 
       // End cost vector consists of all states (no inputs at last state).
       hN << p_x << p_y << theta;
@@ -205,7 +193,7 @@ int main( )
       OCP ocp(0, 15, 30);
       ocp.minimizeLSQ( W, h); 
       ocp.minimizeLSQEndTerm( WN, hN);
-      /*ocp.maximizeLagrangeTerm(obstDist2);
+      /*ocp.maximizeLagrangeTerm(dump);
       ocp.maximizeLagrangeTerm(obstDist3);
       ocp.maximizeLagrangeTerm(obstDist4);
       ocp.maximizeLagrangeTerm(obstDist5);
@@ -216,6 +204,12 @@ int main( )
       // Add constraints
       ocp.subjectTo(-.6 <=    phi    <= .6);
       ocp.subjectTo(-0.5 <=     v     <= 0.5);
+      ocp.subjectTo(1 <= obstDist1 <= 10000);
+      ocp.subjectTo(1 <= obstDist2 <= 10000);
+      ocp.subjectTo(1 <= obstDist3 <= 10000);
+      ocp.subjectTo(1 <= obstDist4 <= 10000);
+      ocp.subjectTo(1 <= obstDist5 <= 10000);
+      ocp.subjectTo(1 <= obstDist6 <= 10000);
       ocp.subjectTo(1 <= obstDist7 <= 10000);
 
       ocp.setNOD(15);
