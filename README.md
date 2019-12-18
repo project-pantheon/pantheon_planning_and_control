@@ -24,9 +24,10 @@ where <ACADO_ROOT> is the absolute patg to the ACADOtoolkit folder.
 sudo apt-get install libyaml-cpp-dev libglfw3-dev python-catkin-tools ros-melodic-octomap-ros libgoogle-glog-dev libglew-dev libglm-dev
 ## Creating the workspace 
 mkdir -p ~/sherpa_ws/src
-cd ~/sherpa_ws/src/
+cd ~/sherpa_ws/
 catkin init 
-git clone https://github.com/cirpote/pantheon_planning_and_control.git && cd pantheon_planning_and_control
+cd src/
+git clone https://github.com/project-pantheon/pantheon_planning_and_control.git && cd pantheon_planning_and_control
 sh clone_dependencies.sh
 catkin build
 ```
