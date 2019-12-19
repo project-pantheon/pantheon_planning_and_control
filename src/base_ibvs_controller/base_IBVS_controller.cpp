@@ -10,15 +10,20 @@ void BaseibvsController::initializeControllerfromYAML(const std::string& yaml_fi
   std::cout << FBLU("Reading Input params from: ") << yaml_file << "\n";
 
   YAML::Node configuration = YAML::LoadFile(yaml_file);
-  std::vector<double> q_p, qf_p, vel_bnds, phi_bnds, obst1, obst2, obst3, obst4, obst5, obst6;
+  std::vector<double> q_p, qf_p, vel_bnds, phi_bnds, obst1, obst2, obst3, obst4, obst5, obst6, q_control;
 
   
   // Path constraints factors assignment
   q_p = configuration["path_constraints"]["q_p"].as<std::vector<double>>();
   q_theta_ = configuration["path_constraints"]["q_theta"].as<double>();
   q_obst_ = configuration["path_constraints"]["q_obst"].as<double>();
+  q_control = configuration["path_constraints"]["q_control"].as<std::vector<double>>();
+  alpha_ = configuration["path_constraints"]["alpha"].as<double>(); 
+  beta_ = configuration["path_constraints"]["beta"].as<double>(); 
+  gamma_ = configuration["path_constraints"]["gamma"].as<double>();
 
   q_p_ << q_p.at(0), q_p.at(1);
+  q_control_ << q_control.at(0), q_control.at(1);
 
   // Terminal constraints factors assignment
   qf_p = configuration["terminal_constraints"]["qf_p"].as<std::vector<double>>();

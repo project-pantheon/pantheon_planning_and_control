@@ -32,7 +32,7 @@ class BaseibvsController
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       // path_constraints params
-      Eigen::Vector2d q_p_;
+      Eigen::Vector2d q_p_, q_control_;
       double q_obst_, q_theta_;
 
       // terminal_constraints params
@@ -47,7 +47,7 @@ class BaseibvsController
       double safety_distance_;
 
       //constant by parameters
-      float l_;
+      float l_, alpha_, beta_, gamma_;
       float yaw_rate_damping;
       float mass_;
       float roll_time_constant_, roll_gain_, pitch_time_constant_, pitch_gain_;

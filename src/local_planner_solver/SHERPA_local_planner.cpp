@@ -128,8 +128,8 @@ bool SherpaAckermannPlanner::InitializeController()
   W_(7,7) = q_obst_;
   W_(8,8) = q_obst_;
   W_(9,9) = q_obst_;
-  W_(10,10) = 200;
-  W_(11,11) = 200;
+  W_(10,10) = q_control_(0);
+  W_(11,11) = q_control_(1);
 
   WN_(0,0) = qf_p_(0);
   WN_(1,1) = qf_p_(1);
@@ -181,7 +181,8 @@ bool SherpaAckermannPlanner::InitializeController()
                                                     obst5_(0), obst5_(1),     // 5st Obstacle x-y position
                                                     obst6_(0), obst6_(1),     // 6st Obstacle x-y position
                                                     obst7_(0), obst7_(1),     // tst Obstacle x-y position
-                                                    l_;                       // vehicle lenght
+                                                    l_, alpha_,               // vehicle lenght, barrier params
+                                                    beta_, gamma_;            // barrier params
   }
 
   std::cout << FBLU("Short Term controller Online Data matrix: ") << "\n"; 
