@@ -174,13 +174,13 @@ int main( )
       h << p_x 
         << p_y 
         << theta 
-        << exp( 4.5 - 2 * obstDist1)  //1 / ( obstDist1) 
-        << exp( 4.5 - 2 * obstDist2)
-        << exp( 4.5 - 2 * obstDist3) 
-        << exp( 4.5 - 2 * obstDist4) 
-        << exp( 4.5 - 2 * obstDist5)
-        << exp( 4.5 - 2 * obstDist6) 
-        << exp( 4.75 - 2 * obstDist7)
+        << exp( 4.35 - 2 * obstDist1)  //1 / ( obstDist1) 
+        << exp( 4.35 - 2 * obstDist2)
+        << exp( 4.35 - 2 * obstDist3) 
+        << exp( 4.35 - 2 * obstDist4) 
+        << exp( 4.35 - 2 * obstDist5)
+        << exp( 4.35 - 2 * obstDist6) 
+        << exp( 5 - 2 * obstDist7)
         << phi 
         << v;
 

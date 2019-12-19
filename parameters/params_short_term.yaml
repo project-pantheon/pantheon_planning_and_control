@@ -4,8 +4,8 @@ vehicle_parameters:
 
 path_constraints:
 
-  q_p:                    [60, 60]
-  q_theta:                60
+  q_p:                    [40, 40]
+  q_theta:                40
   q_obst:                 10
 
 terminal_constraints:
@@ -16,7 +16,7 @@ terminal_constraints:
 boundary_constraints:
 
   vel_bounds:            [-.5, .5]   
-  phi_bounds:            [-.7, .7] 
+  phi_bounds:            [-.9, .9] 
 
 ros_parameters:
 

@@ -25,7 +25,7 @@ MavGUI::MavGUI(ros::NodeHandle nh) : BaseGUI(nh), Obst1_(4,-2,0) ,
   _activate_controller = _base_nh.serviceClient<rm3_ackermann_controller::ActivateController>("/activate_controller");
 
   avatarImg = cv::Mat(cv::Size(640,640), CV_8UC3);
-  camera = std::make_shared<Camera>( glm::vec3(0.f, 0.f, 9.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.f, 0.f );
+  camera = std::make_shared<Camera>( glm::vec3(0.f, 0.f, 8.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.f, 0.f );
   std::cout << FGRN("Camera Correctly Initialized\n\n");
 }
 
@@ -59,7 +59,7 @@ void MavGUI::init3DObjRendering(std::string&& package_path_str){
 
 void MavGUI::processAvatar(){
 
-    camera = std::make_shared<Camera>( glm::vec3(_current_odom_position(0), _current_odom_position(1), 9.0f),
+    camera = std::make_shared<Camera>( glm::vec3(_current_odom_position(0), _current_odom_position(1), 8.0f),
                                        glm::vec3(0.0f, 1.0f, 0.0f), -90.f, 0.f );
 
     ImVec4 clear_color = ImColor(34, 43, 46);
@@ -67,45 +67,52 @@ void MavGUI::processAvatar(){
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glViewport(0, 0, 640, 640);
+    glViewport(250, 250, 640, 640);
     // don't forget to enable shader before setting uniforms
     shader->use();
 
     // view/projection transformations
-    glm::mat4 projection = glm::perspective((float)476, (float)640 / (float)640, 0.1f, 250.0f);
+    glm::mat4 projection = glm::perspective((float)250, (float)640 / (float)640, 0.1f, 100.0f);
 
-    glm::mat4 view = camera->GetViewMatrix();
+    glm::mat4 view = camera->GetViewMatrix();   
+
     shader->setMat4("projection", projection);
     shader->setMat4("view", view);
 
     // render the loaded model
     glm::mat4 currmodel1 = glm::mat4(1.0f);
     currmodel1 = glm::translate(currmodel1, glm::vec3(4, -2, 0)); // translate it down so it's at the center of the scene
+    currmodel1 = glm::scale(currmodel1, glm::vec3(1, 1, 1)); // scale it down so it's at the center of the scene
     shader->setMat4("model", currmodel1);
     tree_model->Draw(*shader);
 
     glm::mat4 currmodel2 = glm::mat4(1.0f);
     currmodel2 = glm::translate(currmodel2, glm::vec3(7, -2, 0)); // translate it down so it's at the center of the scene
+    currmodel2 = glm::scale(currmodel2, glm::vec3(1, 1, 1)); // scale it down so it's at the center of the scene
     shader->setMat4("model", currmodel2);
     tree_model->Draw(*shader);
 
     glm::mat4 currmodel3 = glm::mat4(1.0f);
     currmodel3 = glm::translate(currmodel3, glm::vec3(10, -2, 0)); // translate it down so it's at the center of the scene
+    currmodel3 = glm::scale(currmodel3, glm::vec3(1, 1, 1)); // scale it down so it's at the center of the scene
     shader->setMat4("model", currmodel3);
     tree_model->Draw(*shader);
 
     glm::mat4 currmodel4 = glm::mat4(1.0f);
     currmodel4 = glm::translate(currmodel4, glm::vec3(4, -6.5, 0)); // translate it down so it's at the center of the scene
+    currmodel4 = glm::scale(currmodel4, glm::vec3(1, 1, 1)); // scale it down so it's at the center of the scene
     shader->setMat4("model", currmodel4);
     tree_model->Draw(*shader);
 
     glm::mat4 currmodel5 = glm::mat4(1.0f);
     currmodel5 = glm::translate(currmodel5, glm::vec3(7, -6.5, 0)); // translate it down so it's at the center of the scene
+    currmodel5 = glm::scale(currmodel5, glm::vec3(1, 1, 1)); // scale it down so it's at the center of the scene
     shader->setMat4("model", currmodel5);
     tree_model->Draw(*shader);
 
     glm::mat4 currmodel6 = glm::mat4(1.0f);
     currmodel6 = glm::translate(currmodel6, glm::vec3(10, -6.5, 0)); // translate it down so it's at the center of the scene
+    currmodel6 = glm::scale(currmodel6, glm::vec3(1, 1, 1)); // scale it down so it's at the center of the scene
     shader->setMat4("model", currmodel6);
     tree_model->Draw(*shader);
 
@@ -127,7 +134,7 @@ void MavGUI::processAvatar(){
     sherpa_model->Draw(*shader);
 
 
-    glReadPixels ( 0, 0, 640, 640, GL_BGR,
+    glReadPixels ( 250, 250, 640, 640, GL_BGR,
                    GL_UNSIGNED_BYTE, ( GLubyte * ) avatarImg.data );
     cv::flip(avatarImg, avatarImg, 0);
     cv::cvtColor(avatarImg, avatarImg, CV_RGB2BGR);
@@ -141,7 +148,7 @@ void MavGUI::processAvatar(){
     for(unsigned int iter = 0; iter < N; ++iter){
       pt[iter] = Eigen::Vector2f( - trajectory_pts_.points[0].positions[iter * 3 + 1], - trajectory_pts_.points[0].positions[iter * 3] ) - 
                 Eigen::Vector2f( - _current_odom_position(1), - _current_odom_position(0));
-      pt[iter] = 180*pt[iter]/9 + Eigen::Vector2f(320/2,320/2); 
+      pt[iter] = 250*pt[iter]/9 + Eigen::Vector2f(320/2,320/2); 
       cv::circle(avatarImg_res, cv::Point2i(pt[iter](0), pt[iter](1)), 5, cv::Scalar(255,0,0), 3);
     }
 
