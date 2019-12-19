@@ -163,29 +163,29 @@ int main( )
       IntermediateState obstDist6u = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6-.25 ) * ( p_y - yObst6-.25 );
       IntermediateState obstDist6dw = ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6+.25 ) * ( p_y - yObst6+.25 );*/
      
-      IntermediateState obstDist1 = sqrt( ( p_x - xObst1 + 0.05 ) * ( p_x - xObst1 + 0.05 ) + ( p_y - yObst1 + 0.05 ) * ( p_y - yObst1 + 0.05 ) );
-      IntermediateState obstDist2 = sqrt( ( p_x - xObst2 + 0.05 ) * ( p_x - xObst2 + 0.05 ) + ( p_y - yObst2 + 0.05 ) * ( p_y - yObst2 + 0.05 ) );
-      IntermediateState obstDist3 = sqrt( ( p_x - xObst3 + 0.05 ) * ( p_x - xObst3 + 0.05 ) + ( p_y - yObst3 + 0.05 ) * ( p_y - yObst3 + 0.05 ) );
-      IntermediateState obstDist4 = sqrt( ( p_x - xObst4 + 0.05 ) * ( p_x - xObst4 + 0.05 ) + ( p_y - yObst4 + 0.05 ) * ( p_y - yObst4 + 0.05 ) );
-      IntermediateState obstDist5 = sqrt( ( p_x - xObst5 + 0.05 ) * ( p_x - xObst5 + 0.05 ) + ( p_y - yObst5 + 0.05 ) * ( p_y - yObst5 + 0.05 ) );
-      IntermediateState obstDist6 = sqrt( ( p_x - xObst6 + 0.05 ) * ( p_x - xObst6 + 0.05 ) + ( p_y - yObst6 + 0.05 ) * ( p_y - yObst6 + 0.05 ) );
-      IntermediateState obstDist7 = sqrt( ( p_x - xObst7 + 0.05 ) * ( p_x - xObst7 + 0.05 ) + ( p_y - yObst7 + 0.05 ) * ( p_y - yObst7 + 0.05 ) );
+      IntermediateState obstDist1 = sqrt( ( p_x - xObst1 ) * ( p_x - xObst1 ) + ( p_y - yObst1 ) * ( p_y - yObst1 ) );
+      IntermediateState obstDist2 = sqrt( ( p_x - xObst2 ) * ( p_x - xObst2 ) + ( p_y - yObst2 ) * ( p_y - yObst2 ) );
+      IntermediateState obstDist3 = sqrt( ( p_x - xObst3 ) * ( p_x - xObst3 ) + ( p_y - yObst3 ) * ( p_y - yObst3 ) );
+      IntermediateState obstDist4 = sqrt( ( p_x - xObst4 ) * ( p_x - xObst4 ) + ( p_y - yObst4 ) * ( p_y - yObst4 ) );
+      IntermediateState obstDist5 = sqrt( ( p_x - xObst5 ) * ( p_x - xObst5 ) + ( p_y - yObst5 ) * ( p_y - yObst5 ) );
+      IntermediateState obstDist6 = sqrt( ( p_x - xObst6 ) * ( p_x - xObst6 ) + ( p_y - yObst6 ) * ( p_y - yObst6 ) );
+      IntermediateState obstDist7 = sqrt( ( p_x - xObst7 ) * ( p_x - xObst7 ) + ( p_y - yObst7 ) * ( p_y - yObst7 ) );
 
       h << p_x 
         << p_y 
         << theta 
-        << 1 / ( obstDist1) 
-        << 1 / ( obstDist2)
-        << 1 / ( obstDist3) 
-        << 1 / ( obstDist4) 
-        << 1 / ( obstDist5)
-        << 1 / ( obstDist6) 
-        << 1 / ( obstDist7)
+        << exp( 4.5 - 2 * obstDist1)  //1 / ( obstDist1) 
+        << exp( 4.5 - 2 * obstDist2)
+        << exp( 4.5 - 2 * obstDist3) 
+        << exp( 4.5 - 2 * obstDist4) 
+        << exp( 4.5 - 2 * obstDist5)
+        << exp( 4.5 - 2 * obstDist6) 
+        << exp( 4.75 - 2 * obstDist7)
         << phi 
         << v;
 
       // End cost vector consists of all states (no inputs at last state).
-      hN << p_x << p_y << theta;
+      hN << p_x  << p_y << theta;
 
       BMatrix W = eye<bool>( h.getDim() );
       BMatrix WN = eye<bool>( hN.getDim() );
@@ -204,13 +204,13 @@ int main( )
       // Add constraints
       ocp.subjectTo(-.6 <=    phi    <= .6);
       ocp.subjectTo(-0.5 <=     v     <= 0.5);
-      ocp.subjectTo(1 <= obstDist1 <= 10000);
+      /*ocp.subjectTo(1 <= obstDist1 <= 10000);
       ocp.subjectTo(1 <= obstDist2 <= 10000);
       ocp.subjectTo(1 <= obstDist3 <= 10000);
       ocp.subjectTo(1 <= obstDist4 <= 10000);
       ocp.subjectTo(1 <= obstDist5 <= 10000);
       ocp.subjectTo(1 <= obstDist6 <= 10000);
-      ocp.subjectTo(1 <= obstDist7 <= 10000);
+      ocp.subjectTo(1 <= obstDist7 <= 10000);*/
 
       ocp.setNOD(15);
       OCPexport mpc(ocp);
@@ -226,6 +226,7 @@ int main( )
       mpc.set( INTEGRATOR_TYPE, INT_RK78);
       mpc.set( ABSOLUTE_TOLERANCE, 1e-3 ); 
       mpc.set( INTEGRATOR_TOLERANCE, 1e-3 );
+      mpc.set( INFEASIBLE_QP_HANDLING, IQH_IGNORE);
 
       mpc.printOptionsList();
 

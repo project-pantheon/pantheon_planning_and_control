@@ -128,8 +128,8 @@ bool SherpaAckermannPlanner::InitializeController()
   W_(7,7) = q_obst_;
   W_(8,8) = q_obst_;
   W_(9,9) = q_obst_;
-  W_(10,10) = 100;
-  W_(11,11) = 100;
+  W_(10,10) = 200;
+  W_(11,11) = 200;
 
   WN_(0,0) = qf_p_(0);
   WN_(1,1) = qf_p_(1);
@@ -145,7 +145,7 @@ bool SherpaAckermannPlanner::InitializeController()
     
   for (size_t i = 0; i < ACADO_N; ++i) {
 
-    acadoVariables.lbAValues[ACADO_NPAC * i] = 2;                   // min obst1 dist
+    /*acadoVariables.lbAValues[ACADO_NPAC * i] = 2;                   // min obst1 dist
     acadoVariables.lbAValues[ACADO_NPAC * i + 1] = 2;                   // min obst1 dist
     acadoVariables.lbAValues[ACADO_NPAC * i + 2] = 2;                   // min obst1 dist
     acadoVariables.lbAValues[ACADO_NPAC * i + 3] = 2;                   // min obst1 dist
@@ -158,7 +158,7 @@ bool SherpaAckermannPlanner::InitializeController()
     acadoVariables.ubAValues[ACADO_NPAC * i + 3] = 100;
     acadoVariables.ubAValues[ACADO_NPAC * i + 4] = 100;
     acadoVariables.ubAValues[ACADO_NPAC * i + 5] = 100;
-    acadoVariables.ubAValues[ACADO_NPAC * i + 6] = 100;
+    acadoVariables.ubAValues[ACADO_NPAC * i + 6] = 100;*/
 
     acadoVariables.lbValues[ACADO_NU * i] = vel_bnds_(0);        // min vel_x
     acadoVariables.lbValues[ACADO_NU * i + 1] = vel_bnds_(0);    // min vel_y
