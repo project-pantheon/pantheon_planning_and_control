@@ -8,8 +8,8 @@ path_constraints:
   q_theta:                40
   q_obst:                 10
   q_control:              [200, 200]
-  alpha:                  4.35
-  beta:                   2
+  alpha:                  5
+  beta:                   3
   gamma:                  5
 
 terminal_constraints:
