@@ -14,6 +14,8 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   trajectory_pts_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>( SHERPA_planner_.traj_topic, 1);
   lyapunov_sub_ = nh.subscribe( SHERPA_planner_.lyapunov_topic, 1, &IBVSRandomNode::LyapunovCallback, this, ros::TransportHints().tcpNoDelay() );
 
+  updateObstacles_serv_ = nh.advertiseService("updateObstacles", &IBVSRandomNode::updateObstacles, this);
+
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   SHERPA_planner_.InitializeController();
 
@@ -118,6 +120,28 @@ void IBVSRandomNode::setDynamicObstacle(){
   SHERPA_planner_.obst7_ = Eigen::Vector2d(_dyn_obst_vec2f[0], _dyn_obst_vec2f[1]);
   SHERPA_planner_.InitializeController();
   std::cout << FGRN("dynamic_obstacle succesfully set to: ") << SHERPA_planner_.obst7_.transpose() << "\n";
+}
+
+bool IBVSRandomNode::updateObstacles(
+            rvb_mpc::Obstacles::Request& req, 
+            rvb_mpc::Obstacles::Response& res)
+{
+  try{
+    ROS_INFO("updateObstacles");
+    SHERPA_planner_.obst1_ = Eigen::Vector2d(req.obst1_x, req.obst1_x);
+    SHERPA_planner_.obst2_ = Eigen::Vector2d(req.obst2_x, req.obst2_x);
+    SHERPA_planner_.obst3_ = Eigen::Vector2d(req.obst3_x, req.obst3_x);
+    SHERPA_planner_.obst4_ = Eigen::Vector2d(req.obst4_x, req.obst4_x);
+    SHERPA_planner_.obst5_ = Eigen::Vector2d(req.obst5_x, req.obst5_x);
+    SHERPA_planner_.obst6_ = Eigen::Vector2d(req.obst6_x, req.obst6_x);
+    SHERPA_planner_.InitializeController();
+    res.result=true;
+  }catch(...){
+    ROS_WARN("IBVS: Fail uploading new obstacles.");
+    res.result=false;
+  }
+
+    return 1;
 }
 
 static void error_callback(int error, const char* description) {

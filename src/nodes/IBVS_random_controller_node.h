@@ -24,6 +24,8 @@
 #include "../gui/mav_imgui.h"
 #include <std_msgs/Int32MultiArray.h>
 
+#include <rvb_mpc/Obstacles.h>
+
 class IBVSRandomNode: public MavGUI
 {
  public:
@@ -74,4 +76,10 @@ class IBVSRandomNode: public MavGUI
      std::vector<Eigen::Vector2d> trees_array;
      bool trees_received = false;
      void computeClosestTrees();
+
+     ros::ServiceServer updateObstacles_serv_;
+
+     bool updateObstacles(
+            rvb_mpc::Obstacles::Request& req, 
+            rvb_mpc::Obstacles::Response& res);
 };

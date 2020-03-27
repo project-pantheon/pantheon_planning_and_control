@@ -21,7 +21,8 @@
   <build_depend>roslib</build_depend>
   <build_depend>rm3_ackermann_controller</build_depend>
   <build_depend>visualization_msgs</build_depend>
-
+  <build_depend>message_generation</build_depend>
+  
   <build_export_depend>nav_msgs</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
@@ -32,7 +33,6 @@
   <build_export_depend>roslib</build_export_depend>
   <build_export_depend>rm3_ackermann_controller</build_export_depend>
   <build_export_depend>visualization_msgs</build_export_depend>
-
 
   <exec_depend>image_transport</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
@@ -46,7 +46,7 @@
   <exec_depend>roslib</exec_depend>
   <exec_depend>rm3_ackermann_controller</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
-
+  <exec_depend>message_runtime</exec_depend>
 
   <export>
   </export>

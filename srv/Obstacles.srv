@@ -1,0 +1,14 @@
+float64 obst1_x
+float64 obst1_y
+float64 obst2_x
+float64 obst2_y
+float64 obst3_x
+float64 obst3_y
+float64 obst4_x
+float64 obst4_y
+float64 obst5_x
+float64 obst5_y
+float64 obst6_x
+float64 obst6_y
+---
+bool result
