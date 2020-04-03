@@ -195,7 +195,7 @@ int main(int argc, char** argv) {
   bool show_gnomic_GUI = true;
 
   // Main loop
-  while (!glfwWindowShouldClose(window)) {
+  while (ros::ok()) {
     glfwPollEvents();
     ImGui_ImplGlfwGL3_NewFrame();
 
@@ -224,8 +224,6 @@ int main(int argc, char** argv) {
   // Cleanup
   ImGui_ImplGlfwGL3_Shutdown();
   glfwTerminate();
-
-  ros::spin();
 
   return 0;
 }
