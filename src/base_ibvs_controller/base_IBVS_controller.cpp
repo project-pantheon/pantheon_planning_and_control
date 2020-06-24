@@ -1,6 +1,6 @@
 #include "base_IBVS_controller.h"
 
-BaseibvsController::BaseibvsController(const std::string& yaml_file) : obst7_(20.f,20.f) {
+BaseibvsController::BaseibvsController(const std::string& yaml_file) : static_obstacles(7, Eigen::Vector2f(100.f, 100.f)) {
 
     initializeControllerfromYAML(yaml_file);
 }
@@ -48,12 +48,12 @@ void BaseibvsController::initializeControllerfromYAML(const std::string& yaml_fi
   obst5 = configuration["obstacles"]["obst5"].as<std::vector<double>>();
   obst6 = configuration["obstacles"]["obst6"].as<std::vector<double>>();
   safety_distance_ = configuration["obstacles"]["safety_dist"].as<double>();
-  obst1_ << obst1.at(0), obst1.at(1);
-  obst2_ << obst2.at(0), obst2.at(1);
-  obst3_ << obst3.at(0), obst3.at(1);
-  obst4_ << obst4.at(0), obst4.at(1);
-  obst5_ << obst5.at(0), obst5.at(1);
-  obst6_ << obst6.at(0), obst6.at(1);
+  static_obstacles[0] << obst1.at(0), obst1.at(1);
+  static_obstacles[1] << obst2.at(0), obst2.at(1);
+  static_obstacles[2] << obst3.at(0), obst3.at(1);
+  static_obstacles[3] << obst4.at(0), obst4.at(1);
+  static_obstacles[4] << obst5.at(0), obst5.at(1);
+  static_obstacles[5] << obst6.at(0), obst6.at(1);
 
   traj_cmd_topic = configuration["ros_parameters"]["traj_cmd_topic"].as<string>();    
   odometry_topic = configuration["ros_parameters"]["odometry_topic"].as<string>(); 

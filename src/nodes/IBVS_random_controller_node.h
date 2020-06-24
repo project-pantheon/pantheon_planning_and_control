@@ -1,9 +1,12 @@
 #pragma once
+
 #include <src/local_planner_solver/SHERPA_local_planner.h>
+#include "randomObjectSpawner.h"
 #include <ros/package.h>
 
 //ros STUFF
 #include <cv_bridge/cv_bridge.h>
+#include <pantheon_2d_slam/navigationObstacles.h>
 
 //opencv library
 #include <opencv2/opencv.hpp>
@@ -24,8 +27,6 @@
 #include "../gui/mav_imgui.h"
 #include <std_msgs/Int32MultiArray.h>
 
-#include <rvb_mpc/Obstacles.h>
-
 class IBVSRandomNode: public MavGUI
 {
  public:
@@ -38,8 +39,6 @@ class IBVSRandomNode: public MavGUI
    
       // Boolean controls
       bool first_trajectory_cmd_;
-     //  randomSpawner dynObjSpawner;
-     ofstream logFileStream;
      char packagePath[200];
      std::string fileName;
 
@@ -55,6 +54,7 @@ class IBVSRandomNode: public MavGUI
      ros::Subscriber cmd_pose_sub_;
      ros::Subscriber ackrmann_cmd_sub_;
      ros::Subscriber lyapunov_sub_;
+     ros::Subscriber nav_obsts_sub_;
       
      //Solver Functions
      void initializeAcadoSolver();
@@ -65,21 +65,9 @@ class IBVSRandomNode: public MavGUI
      void AkrmCommandsCallback(const geometry_msgs::TwistConstPtr&);
      void ImageCallback(const sensor_msgs::ImageConstPtr&);
      void LyapunovCallback(const std_msgs::Float32ConstPtr&);
+     void navigationObstaclesCallback(const pantheon_2d_slam::navigationObstaclesConstPtr&);
      void resetSolver();
-     void setDynamicObstacle();
-     void getStaticObstacle(); 
-     void writeLogData();
 
      //commands
      Eigen::Matrix<double,3,1>& ang_vel_ref;
-
-     std::vector<Eigen::Vector2d> trees_array;
-     bool trees_received = false;
-     void computeClosestTrees();
-
-     ros::ServiceServer updateObstacles_serv_;
-
-     bool updateObstacles(
-            rvb_mpc::Obstacles::Request& req, 
-            rvb_mpc::Obstacles::Response& res);
 };

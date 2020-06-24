@@ -41,8 +41,8 @@ public:
     MavGUI(ros::NodeHandle nh);
     
     ~MavGUI() {
-	std::cerr << "[MavGUI]: deleting\n";
-	std::cerr << "[MavGUI]: deleted\n";
+	std::cerr << "[PANTHEON_GUI]: deleting\n";
+	std::cerr << "[PANTHEON_GUI]: deleted\n";
     }
 
     void showGUI(bool* p_open);
@@ -55,7 +55,7 @@ protected:
     ros::ServiceClient _set_control_gains, _activate_controller;
     ros::Time _gui_ros_time;
     
-    // ROS publishertrue
+    // ROS publisher
     ros::Publisher _cmd_pub, _waypoint_pub;
 
     void updateDesiredState();
@@ -63,13 +63,11 @@ protected:
     void activatePublisher(const std::string&, const std::string&);
     void activateController();
     void disactivateController();
-    virtual void setDynamicObstacle() = 0;
-    virtual void getStaticObstacle() = 0;
     virtual void resetSolver() = 0;
     void changeControlLawGains();
 
     // Obstcles Position for RViz drawings
-    Eigen::Vector3f Obst1_, Obst2_, Obst3_, Obst4_, Obst5_, Obst6_;
+    std::vector<Eigen::Vector2f> static_obstacles;
 
     // Gui utils
     float _des_pos_vec3f_t[2], _des_pos_vec3f_w[2];

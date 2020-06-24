@@ -43,11 +43,11 @@ class BaseibvsController
       Eigen::Vector2d vel_bnds_, phi_bnds_;
 
       // obstacle params
-      Eigen::Vector2d obst1_, obst2_, obst3_, obst4_, obst5_, obst6_, obst7_;
+      std::vector<Eigen::Vector2f> static_obstacles;
       double safety_distance_;
 
       //constant by parameters
-      float l_, alpha_, beta_, gamma_;
+      float l_, alpha_, beta_, gamma_;;
       float yaw_rate_damping;
       float mass_;
       float roll_time_constant_, roll_gain_, pitch_time_constant_, pitch_gain_;

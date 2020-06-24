@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(rvb_mpc)
+project(pantheon_planning_and_control)
 
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake_modules" )
@@ -22,7 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   rm3_ackermann_controller
   visualization_msgs
-  message_generation
+  pantheon_2d_slam
 )
 
 find_package(yaml-cpp REQUIRED)
@@ -31,16 +31,6 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 message("OpenCV Include Dir: " ${OpenCV_INCLUDE_DIRS})
 find_package(ACADO REQUIRED)
 find_package(Eigen3 REQUIRED)
-
-add_service_files(
-  FILES
-  Obstacles.srv
-)
-
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
 
 catkin_package()
 

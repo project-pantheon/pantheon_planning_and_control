@@ -4,17 +4,15 @@ using namespace std;
 
 IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_short_file)
   : MavGUI(nh), nh_(nh), first_trajectory_cmd_(false), SHERPA_planner_(yaml_short_file), 
-    ang_vel_ref(SHERPA_planner_.odometry.angular_velocity_B), trees_array(21, Eigen::Vector2d(0,0))
-
+    ang_vel_ref(SHERPA_planner_.odometry.angular_velocity_B)
 {
 
   odom_sub_ = nh_.subscribe( SHERPA_planner_.odometry_topic, 1, &IBVSRandomNode::OdometryCallback, this, ros::TransportHints().tcpNoDelay() );
   cmd_pose_sub_ = nh_.subscribe( SHERPA_planner_.traj_cmd_topic, 1, &IBVSRandomNode::CommandPoseCallback, this, ros::TransportHints().tcpNoDelay() );
   ackrmann_cmd_sub_ = nh_.subscribe( SHERPA_planner_.command_topic, 1, &IBVSRandomNode::AkrmCommandsCallback, this, ros::TransportHints().tcpNoDelay() );
   trajectory_pts_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>( SHERPA_planner_.traj_topic, 1);
-  lyapunov_sub_ = nh.subscribe( SHERPA_planner_.lyapunov_topic, 1, &IBVSRandomNode::LyapunovCallback, this, ros::TransportHints().tcpNoDelay() );
-
-  updateObstacles_serv_ = nh.advertiseService("updateObstacles", &IBVSRandomNode::updateObstacles, this);
+  lyapunov_sub_ = nh_.subscribe( SHERPA_planner_.lyapunov_topic, 1, &IBVSRandomNode::LyapunovCallback, this, ros::TransportHints().tcpNoDelay() );
+  nav_obsts_sub_ = nh_.subscribe( "/ekf_slam_node_with_neighbourhood/navigation_obstacles", 1, &IBVSRandomNode::navigationObstaclesCallback, this, ros::TransportHints().tcpNoDelay() );
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   SHERPA_planner_.InitializeController();
@@ -24,38 +22,39 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   trajectory_pts_.points.push_back(pt);
   trajectory_pts_.joint_names.push_back("sherpa_base_link");
 
-  this->init3DObjRendering( ros::package::getPath("rvb_mpc") );
-
-  int iter = 0;
-  while(true){
-    if (exists( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" ) ){
-        iter++;
-    } else {
-      logFileStream.open( ros::package::getPath("rvb_mpc") + "/log_output_folder/" + "log_output_" + to_string(iter) + ".txt" );
-      break;
-    }
-  }
+  this->init3DObjRendering( ros::package::getPath("pantheon_planning_and_control") );
 
 }
 
-IBVSRandomNode::~IBVSRandomNode(){
-  logFileStream.close();
-}
+IBVSRandomNode::~IBVSRandomNode(){}
 
-void IBVSRandomNode::writeLogData(){
 
-  logFileStream << ros::Time::now().toSec() << " " << SHERPA_planner_.odometry.position_W.x() << " " << SHERPA_planner_.odometry.position_W.y() << " " << 
-                   SHERPA_planner_.odometry.getYaw() << " " << SHERPA_planner_.solve_time << "\n"; //  orientation_W_B.w() << " " << stnl_controller.odometry.orientation_W_B.x() << " " << stnl_controller.odometry.orientation_W_B.y() << " " << stnl_controller.odometry.orientation_W_B.z() << " " <<
-                   /*trajectory_point.position_W.x() << " " << trajectory_point.position_W.y() << " " << trajectory_point.position_W.z() << " " << trajectory_point.getYaw() << " " <<
-                   _target_pos3f[0] << " " << _target_pos3f[1] << " " << _target_pos3f[2] << " " << _target_vel3f[0] << " " << _target_vel3f[1] << " " << _target_vel3f[2] << " " << *_t_delay << " " <<
-                   _vert_obst1_[0] << " " << _vert_obst1_[1] << " " << _vert_obst2_[0] << " " << _vert_obst2_[1] << " " << _horiz_obst_[0] << " " << _horiz_obst_[1] << " " <<
-                   stnl_controller.pT_W_.x() << " " << stnl_controller.pT_W_.y() << " " << stnl_controller.pT_W_.z() << " " << stnl_controller.camera_instrinsics_.x() << " " << stnl_controller.camera_instrinsics_.y() <<  " " <<
-                   stnl_controller.iter << " " << stnl_controller.solve_time << "\n";*/
-
-} 
 
 void IBVSRandomNode::resetSolver(){
   SHERPA_planner_.InitializeController();
+}
+
+void IBVSRandomNode::navigationObstaclesCallback(const pantheon_2d_slam::navigationObstaclesConstPtr& navobstsmsg){
+  
+  int num_static_obstacles = navobstsmsg->staticObstacles.size();
+  if( !num_static_obstacles )
+    return;
+
+  int iter = 0;
+  for( geometry_msgs::Point pt : navobstsmsg->staticObstacles ){
+    static_obstacles[iter] << pt.x, pt.y;
+    SHERPA_planner_.static_obstacles[iter] << pt.x, pt.y;
+    iter++;
+  } 
+
+  if( navobstsmsg->dynamicObstacles.size() ){
+    geometry_msgs::Point dynamic_obstacle = navobstsmsg->dynamicObstacles[0];
+    _dyn_obst_vec2f[0] = dynamic_obstacle.x;
+    _dyn_obst_vec2f[1] = dynamic_obstacle.y;
+    SHERPA_planner_.static_obstacles[6] << dynamic_obstacle.x, dynamic_obstacle.y;
+  }
+
+  SHERPA_planner_.UpdateObstacles();
 }
 
 void IBVSRandomNode::LyapunovCallback(const std_msgs::Float32ConstPtr& lyapunov_msg){
@@ -90,9 +89,6 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   _current_yaw_orientation_deg = _current_yaw_orientation * 180.0 / M_PI;
   _current_odom_position = utils::vector3FromPointMsg(odom_msg->pose.pose.position);  
 
-  if( trees_received )
-    computeClosestTrees();
-
   // Check Is the first trajectory msg has been received
   if(!first_trajectory_cmd_)
     return;
@@ -101,47 +97,7 @@ void IBVSRandomNode::OdometryCallback(const nav_msgs::OdometryConstPtr& odom_msg
   trajectory_pts_.header.stamp. ros::Time::now();
   trajectory_pts_pub_.publish(trajectory_pts_);
 
-  writeLogData();
   return;
-}
-
-void IBVSRandomNode::computeClosestTrees(){
-
-  // TO IMPLEMENT
-}
-
-void IBVSRandomNode::getStaticObstacle(){
-  
-  // TO IMPLEMENT
-}
-
-void IBVSRandomNode::setDynamicObstacle(){
-
-  SHERPA_planner_.obst7_ = Eigen::Vector2d(_dyn_obst_vec2f[0], _dyn_obst_vec2f[1]);
-  SHERPA_planner_.InitializeController();
-  std::cout << FGRN("dynamic_obstacle succesfully set to: ") << SHERPA_planner_.obst7_.transpose() << "\n";
-}
-
-bool IBVSRandomNode::updateObstacles(
-            rvb_mpc::Obstacles::Request& req, 
-            rvb_mpc::Obstacles::Response& res)
-{
-  try{
-    ROS_INFO("updateObstacles");
-    SHERPA_planner_.obst1_ = Eigen::Vector2d(req.obst1_x, req.obst1_x);
-    SHERPA_planner_.obst2_ = Eigen::Vector2d(req.obst2_x, req.obst2_x);
-    SHERPA_planner_.obst3_ = Eigen::Vector2d(req.obst3_x, req.obst3_x);
-    SHERPA_planner_.obst4_ = Eigen::Vector2d(req.obst4_x, req.obst4_x);
-    SHERPA_planner_.obst5_ = Eigen::Vector2d(req.obst5_x, req.obst5_x);
-    SHERPA_planner_.obst6_ = Eigen::Vector2d(req.obst6_x, req.obst6_x);
-    SHERPA_planner_.InitializeController();
-    res.result=true;
-  }catch(...){
-    ROS_WARN("IBVS: Fail uploading new obstacles.");
-    res.result=false;
-  }
-
-    return 1;
 }
 
 static void error_callback(int error, const char* description) {
@@ -167,7 +123,7 @@ int main(int argc, char** argv) {
   #if __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   #endif
-  GLFWwindow* window = glfwCreateWindow(1000, 1000, "sherpa_planner_app", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(1000, 1000, "mav_gui_app", NULL, NULL);
 
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1); // Enable vsync
@@ -188,7 +144,7 @@ int main(int argc, char** argv) {
         std::exit(1);
   }
 
-  ros::init(argc, argv, "sherpa_planner_gui_node");
+  ros::init(argc, argv, "mav_gnomic_gui_node");
   ros::NodeHandle nh("~");
 
   IBVSRandomNode IBVS_node(nh, yaml_short_filename);
@@ -224,6 +180,8 @@ int main(int argc, char** argv) {
   // Cleanup
   ImGui_ImplGlfwGL3_Shutdown();
   glfwTerminate();
+
+  ros::spin();
 
   return 0;
 }

@@ -115,14 +115,7 @@ int main( )
       // System variables
       DifferentialState     p_x, p_y, theta, dump;
       Control               v, phi;
-      OnlineData xObst1, yObst1, 
-                 xObst2, yObst2, 
-                 xObst3, yObst3, 
-                 xObst4, yObst4, 
-                 xObst5, yObst5, 
-                 xObst6, yObst6, 
-                 xObst7, yObst7, 
-                 l, alpha, beta, gamma;
+      OnlineData xObst1, yObst1, xObst2, yObst2, xObst3, yObst3, xObst4, yObst4, xObst5, yObst5, xObst6, yObst6, xObst7, yObst7, l, alpha, beta, gamma;
       DifferentialEquation  f;
       Function              h, hN;
 
@@ -191,8 +184,20 @@ int main( )
         << phi 
         << v;
 
+
+
+
+        /*1 / (obstDist1s + obstDist1d + obstDist1u + obstDist1dw) 
+        << 1 / (obstDist2s + obstDist2d + obstDist2u + obstDist2dw)
+        << 1 / (obstDist3s + obstDist3d + obstDist3u + obstDist3dw) 
+        << 1 / (obstDist4s + obstDist4d + obstDist4u + obstDist4dw) 
+        << 1 / (obstDist5s + obstDist5d + obstDist5u + obstDist5dw) 
+        << 1 / (obstDist6s + obstDist6d + obstDist6u + obstDist6dw) 
+        << 1 / obstDist7 
+        << phi << v;*/
+
       // End cost vector consists of all states (no inputs at last state).
-      hN << p_x  << p_y << theta;
+      hN << p_x << p_y << theta;
 
       BMatrix W = eye<bool>( h.getDim() );
       BMatrix WN = eye<bool>( hN.getDim() );
@@ -200,18 +205,18 @@ int main( )
       OCP ocp(0, 15, 30);
       ocp.minimizeLSQ( W, h); 
       ocp.minimizeLSQEndTerm( WN, hN);
+      /*ocp.maximizeLagrangeTerm(obstDist2);
+      ocp.maximizeLagrangeTerm(obstDist3);
+      ocp.maximizeLagrangeTerm(obstDist4);
+      ocp.maximizeLagrangeTerm(obstDist5);
+      ocp.maximizeLagrangeTerm(obstDist6);
+      ocp.maximizeLagrangeTerm(obstDist7);*/
       ocp.subjectTo( f );
 
       // Add constraints
-      ocp.subjectTo(-.6  <=    phi    <= .6);
+      ocp.subjectTo(-.6 <=    phi    <= .6);
       ocp.subjectTo(-0.5 <=     v     <= 0.5);
-      /*ocp.subjectTo(1 <= obstDist1 <= 10000);
-      ocp.subjectTo(1 <= obstDist2 <= 10000);
-      ocp.subjectTo(1 <= obstDist3 <= 10000);
-      ocp.subjectTo(1 <= obstDist4 <= 10000);
-      ocp.subjectTo(1 <= obstDist5 <= 10000);
-      ocp.subjectTo(1 <= obstDist6 <= 10000);
-      ocp.subjectTo(1 <= obstDist7 <= 10000);*/
+      //ocp.subjectTo(1 <= obstDist7 <= 10000);
 
       ocp.setNOD(18);
       OCPexport mpc(ocp);
@@ -227,7 +232,6 @@ int main( )
       mpc.set( INTEGRATOR_TYPE, INT_RK78);
       mpc.set( ABSOLUTE_TOLERANCE, 1e-3 ); 
       mpc.set( INTEGRATOR_TOLERANCE, 1e-3 );
-      mpc.set( INFEASIBLE_QP_HANDLING, IQH_IGNORE);
 
       mpc.printOptionsList();
 
