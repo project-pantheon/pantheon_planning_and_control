@@ -28,19 +28,26 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
 void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_msgs::JointTrajectory& trajectory_pts)
 {
     
+  float PI = 3.1415926;  
+  float desired_yaw = utils::yawFromQuaternion(trajectory_point.orientation_W_B);
+  float current_yaw = utils::yawFromQuaternion(odometry.orientation_W_B);
+
+  if( fabs( desired_yaw - current_yaw ) > PI )
+    desired_yaw = current_yaw - (desired_yaw + current_yaw);
+
   /*  NON LINEAR CONTROLLER INITIAL STATE AND CONSTRAINTS  */
   for (size_t i = 0; i < ACADO_N; i++) {
     reference_.block(i, 0, 1, ACADO_NY) << trajectory_point.position_W(0), 
                                            trajectory_point.position_W(1), 
-                                           utils::yawFromQuaternion(trajectory_point.orientation_W_B),
+                                           desired_yaw,
                                            0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f,
                                            0.f, 0.f;
   }    
 
-  referenceN_ << trajectory_point.position_W(0), trajectory_point.position_W(1), utils::yawFromQuaternion(trajectory_point.orientation_W_B);
+  referenceN_ << trajectory_point.position_W(0), trajectory_point.position_W(1), desired_yaw;
 
   Eigen::Matrix<double, ACADO_NX, 1> x_0;
-  x_0 << odometry.position_W(0), odometry.position_W(1), utils::yawFromQuaternion(odometry.orientation_W_B), 0.f;
+  x_0 << odometry.position_W(0), odometry.position_W(1), current_yaw, 0.f;
 
   Eigen::Map<Eigen::Matrix<double, ACADO_NX, 1>>(const_cast<double*>(acadoVariables.x0)) = x_0;
   Eigen::Map<Eigen::Matrix<double, ACADO_NY, ACADO_N>>(const_cast<double*>(acadoVariables.y)) = reference_.transpose();
