@@ -25,8 +25,7 @@ boundary_constraints:
 ros_parameters:
 
   traj_cmd_topic:         /command/pose      
-#  odometry_topic:         /ekf_localization_slam_node/slam_odom_magnetic
-  odometry_topic:         /ekf_slam_node/slam_odom
+  odometry_topic:         /base/odom
   command_topic:          /base/base_pad/cmd_vel
   traj_topic:             /sherpa/trajectory_pts
   lyapunov_topic:         /lyapunov

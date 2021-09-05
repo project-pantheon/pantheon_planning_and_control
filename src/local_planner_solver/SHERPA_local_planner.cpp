@@ -19,7 +19,7 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
 
   eigenOdometryFromMsg(odom_msg, &trajectory_point);  
 
-  std::cerr << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose().head(2) << 
+  std::cout << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose().head(2) << 
                " " << utils::yawFromQuaternion(trajectory_point.orientation_W_B) << "\n";  
         
   return true;
