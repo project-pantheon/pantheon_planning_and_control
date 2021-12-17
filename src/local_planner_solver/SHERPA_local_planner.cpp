@@ -19,7 +19,7 @@ bool SherpaAckermannPlanner::setCommandPose(const nav_msgs::Odometry odom_msg){
 
   eigenOdometryFromMsg(odom_msg, &trajectory_point);  
 
-  std::cerr << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose().head(2) << 
+  std::cout << FBLU("Short Term Final State Set to: ") << trajectory_point.position_W.transpose().head(2) << 
                " " << utils::yawFromQuaternion(trajectory_point.orientation_W_B) << "\n";  
         
   return true;
@@ -32,8 +32,13 @@ void SherpaAckermannPlanner::calculateRollPitchYawRateThrustCommands(trajectory_
   float desired_yaw = utils::yawFromQuaternion(trajectory_point.orientation_W_B);
   float current_yaw = utils::yawFromQuaternion(odometry.orientation_W_B);
 
-  if( fabs( desired_yaw - current_yaw ) > PI )
-    desired_yaw = current_yaw - (desired_yaw + current_yaw);
+  //if( fabs( desired_yaw - current_yaw ) > PI )
+  //  desired_yaw = current_yaw - (desired_yaw + current_yaw);
+  if (desired_yaw - current_yaw > PI){
+	  desired_yaw = desired_yaw-PI*2;
+  }else if(desired_yaw - current_yaw < -PI){
+    desired_yaw = desired_yaw+PI*2;
+  }
 
   /*  NON LINEAR CONTROLLER INITIAL STATE AND CONSTRAINTS  */
   for (size_t i = 0; i < ACADO_N; i++) {

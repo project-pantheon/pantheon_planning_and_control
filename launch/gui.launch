@@ -1,8 +1,9 @@
 <launch>
   
-    <node name="ibvs_controller_node" pkg="pantheon_planning_and_control" type="IBVS_random_controller_node" clear_params="true" output="screen" 
+    <arg name="output" default="screen" />
+
+    <node name="ibvs_controller_node" pkg="pantheon_planning_and_control" type="IBVS_random_controller_node" clear_params="true" output="$(arg output)" 
           args="$(find pantheon_planning_and_control)/parameters/params_short_term.yaml">
     </node>
 
 </launch>
-
