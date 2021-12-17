@@ -12,7 +12,9 @@ IBVSRandomNode::IBVSRandomNode(ros::NodeHandle& nh, const std::string& yaml_shor
   ackrmann_cmd_sub_ = nh_.subscribe( SHERPA_planner_.command_topic, 1, &IBVSRandomNode::AkrmCommandsCallback, this, ros::TransportHints().tcpNoDelay() );
   trajectory_pts_pub_ = nh_.advertise<trajectory_msgs::JointTrajectory>( SHERPA_planner_.traj_topic, 1);
   lyapunov_sub_ = nh_.subscribe( SHERPA_planner_.lyapunov_topic, 1, &IBVSRandomNode::LyapunovCallback, this, ros::TransportHints().tcpNoDelay() );
-  nav_obsts_sub_ = nh_.subscribe( "/ekf_localization_slam_node/navigation_obstacles", 1, &IBVSRandomNode::navigationObstaclesCallback, this, ros::TransportHints().tcpNoDelay() );
+  //nav_obsts_sub_ = nh_.subscribe( "/ekf_localization_slam_node/navigation_obstacles", 1, &IBVSRandomNode::navigationObstaclesCallback, this, ros::TransportHints().tcpNoDelay() );
+  nav_obsts_sub_ = nh_.subscribe( "/ekf_slam_node/navigation_obstacles", 1, &IBVSRandomNode::navigationObstaclesCallback, this, ros::TransportHints().tcpNoDelay() );
+
 
   std::cerr << "\n" << FBLU("Initializing short term Controller from:") << " " << yaml_short_file << "\n";
   SHERPA_planner_.InitializeController();
